@@ -12,6 +12,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// map each iterface to its socket
+var ifaceSocket map[int]int
+
 // based on the following link
 // https://go-review.googlesource.com/c/net/+/112817/2/ipv4/header.go
 func headerChecksum(b []byte) uint16 {
@@ -52,9 +55,6 @@ func main() {
 
 	// creates a raw socket for each interface
 	for _, iface := range ifaces {
-		if iface.Name != "lo" {
-			continue
-		}
 		log.Infof("Listen on interface %s", iface.Name)
 		fd, err := syscall.Socket(syscall.AF_PACKET, syscall.SOCK_DGRAM, proto)
 		if err != nil {
@@ -67,6 +67,8 @@ func main() {
 		}); err != nil {
 			log.Fatalf("Bind(): %s", err)
 		}
+
+		ifaceSocket[iface.Index] = fd
 
 		// goroutine for listening
 		go func(fd int) {
