@@ -1,4 +1,4 @@
-# Funny Router
+# Funny Router [Linux Only]
 ## Introduction
 
 This project simulate a simple router in Golang. It has no way for finding out destination MAC address so they must be written by hand in routing table.
